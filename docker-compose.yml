@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: projet-devops
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: app
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: dev
+      APP_SECRET: secret
+      DATABASE_URL: mysql://root:root@db/projet-devops
+
+volumes:
+  db_data:
