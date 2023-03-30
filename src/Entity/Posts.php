@@ -28,7 +28,7 @@ class Posts
     private $content;
 
     /**
-     * @ORM\ManyToOne(targetEntity=categories::class, inversedBy="posts")
+     * @ORM\ManyToOne(targetEntity=Categories::class, inversedBy="posts")
      */
     private $category;
 
@@ -61,15 +61,24 @@ class Posts
         return $this;
     }
 
-    public function getCategory(): ?categories
+    public function getCategory(): ?Categories
     {
         return $this->category;
     }
 
-    public function setCategory(?categories $category): self
+    public function setCategory(?Categories $category): self
     {
         $this->category = $category;
 
         return $this;
+    }
+    
+    public function getCategoryIdOrNull(): ?int
+    {
+        if($this->category !== null){
+            return $this->category->getId();
+        }else{
+            return null;
+        }
     }
 }

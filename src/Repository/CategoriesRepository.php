@@ -39,6 +39,16 @@ class CategoriesRepository extends ServiceEntityRepository
         }
     }
 
+   public function findOneById($value): ?Categories
+   {
+       return $this->createQueryBuilder('c')
+           ->andWhere('c.id = :val')
+           ->setParameter('val', $value)
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+   }
+
 //    /**
 //     * @return Categories[] Returns an array of Categories objects
 //     */
@@ -63,4 +73,5 @@ class CategoriesRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
 }
