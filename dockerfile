@@ -1,11 +1,11 @@
 # Utilisez une image PHP 8.0 basée sur Alpine Linux
-FROM php:8.0-fpm-alpine
-
-# Copiez les fichiers de votre projet dans le conteneur Docker
-COPY . /var/www/html
+FROM php:8.1-fpm-alpine
 
 # Définissez le répertoire de travail
 WORKDIR /var/www/html
+
+# Copiez les fichiers de votre projet dans le conteneur Docker
+COPY . .
 
 # Installez les dépendances PHP nécessaires
 RUN apk add --no-cache \
@@ -21,6 +21,12 @@ RUN apk add --no-cache \
         apcu \
     && docker-php-ext-enable \
         apcu
+
+# Installez Composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# Installez les dépendances de Symfony
+RUN composer install
 
 # Définissez les variables d'environnement pour PHP
 ENV PHP_MEMORY_LIMIT 2G

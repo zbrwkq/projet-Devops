@@ -3,31 +3,42 @@ version: "3.9"
 services:
   db:
     image: mysql:8.0
+    container_name: db
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
       MYSQL_DATABASE: projet-devops
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
+      MYSQL_USER: user 
+      MYSQL_PASSWORD: user 
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      - ./db_data:/var/lib/mysql
 
-  app:
+  php:
+    container_name: php
     build:
       context: .
       dockerfile: Dockerfile
-    image: app
     depends_on:
       - db
-    ports:
-      - "8000:8000"
     environment:
       APP_ENV: dev
-      APP_SECRET: secret
+      APP_SECRET: "caf97b573dcb37745a0d8bd717fea441"
       DATABASE_URL: mysql://root:root@db/projet-devops
+    volumes:
+      - .:/var/www/html/projet-devops/
+    ports:
+      - "9000:9000"
 
-volumes:
-  db_data:
+  web:
+    container_name: web
+    image: nginx:1.21-alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./:/var/www/html/projet-devops
+    depends_on:
+      - php
