@@ -11,15 +11,16 @@ use App\Repository\PostsRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @Route("/post", name="app_post")
+ * @Route("/", name="app_post")
  */
 class PostController extends AbstractController
 {
     /**
-     * @Route("/", name="get_categories", methods={"GET"})
+     * @Route("/post", name="get_posts", methods={"GET"})
      */
     public function index(PostsRepository $postsRepository): JsonResponse
     {
+
         $posts = $postsRepository->findAll();
         $data = [];
         foreach ($posts as $post) {
@@ -39,7 +40,7 @@ class PostController extends AbstractController
      * @Route("/", name="create_post", methods={"POST"})
      */
     public function new(Request $request, PostsRepository $postsRepository, CategoriesRepository $categoriesRepository): JsonResponse
-    {
+    {   
  
         $post = new Posts();
         $post->setTitle($request->get('title'));
