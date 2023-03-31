@@ -1,0 +1,24 @@
+name: Tests
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: composer install
+    - name: Start MySQL
+      run: |
+        sudo service mysql start
+        sleep 10
+    - name: Prepare database
+      run: |
+        php bin/console doctrine:database:create --env=test
+        php bin/console doctrine:schema:update --force --complete --env=test
+        php bin/console doctrine:fixtures:load --no-interaction --env=test
+    - name: Run tests
+      run: php bin/phpunit
+
