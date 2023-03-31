@@ -14,16 +14,33 @@ class PostControllerTest extends WebTestCase
         // $client->followRedirects(true);
 
         $client->request('GET', '/post');
-        $test = $client->getResponse();
+        // $test = $client->getResponse();
         
-        $myDebugVar = array(1, 2, 3);
-        fwrite(STDERR, print_r($test, TRUE));
+        // fwrite(STDERR, print_r($test, TRUE));
+
         // $this->assertTrue($client->getResponse()->isSuccessful());
 
         // $this->assertTrue($client->getResponse()->isRedirect('http://localhost/post'));
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
-        // $this->assertJson($client->getResponse()->getContent());
-        // $this->assertJsonStringEqualsJsonString('{"key": "value"}', $client->getResponse()->getContent());
+        $this->assertJson($client->getResponse()->getContent());
+    }
+
+    public function testNew(): void
+    {
+        $client = static::createClient();
+        $client->followRedirects(true);
+        $client->request('POST', '/post/',
+        [
+            "title" => "test",
+            "content" => "testestestest",
+            "category" => null
+        ]);
+
+        $test = $client->getResponse();
+        fwrite(STDERR, print_r($test, TRUE));
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertJson($client->getResponse()->getContent());
     }
 }
