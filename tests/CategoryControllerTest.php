@@ -4,21 +4,21 @@ namespace App\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class PostControllerTest extends WebTestCase
+class CategoryControllerTest extends WebTestCase
 {
 
     public function testIndex(): void
     {
         $client = static::createClient();
         $client->followRedirects(true);
-        $client->request('GET', '/post');
+        $client->request('GET', '/category');
         // $test = $client->getResponse();
         
         // fwrite(STDERR, print_r($test, TRUE));
 
         // $this->assertTrue($client->getResponse()->isSuccessful());
 
-        // $this->assertTrue($client->getResponse()->isRedirect('http://localhost/post'));
+        // $this->assertTrue($client->getResponse()->isRedirect('http://localhost/category'));
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());
@@ -28,7 +28,7 @@ class PostControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $client->followRedirects(true);
-        $client->request('POST', '/post/',
+        $client->request('POST', '/category/',
         [
             "title" => "test",
             "content" => "testestestest",
@@ -43,7 +43,7 @@ class PostControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $client->followRedirects(true);
-        $client->request('GET', '/post/1');
+        $client->request('GET', '/category/1');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());
@@ -53,7 +53,7 @@ class PostControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $client->followRedirects(true);
-        $client->request('PUT', '/post/1',
+        $client->request('PUT', '/category/1',
         [
             "title" => "test",
             "content" => "testestestest",
@@ -68,7 +68,7 @@ class PostControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $client->followRedirects(true);
-        $client->request('DELETE', '/post/1');
+        $client->request('DELETE', '/category/1');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $this->assertJson($client->getResponse()->getContent());

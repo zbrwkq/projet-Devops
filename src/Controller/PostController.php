@@ -11,12 +11,12 @@ use App\Repository\PostsRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @Route("/", name="app_post")
+ * @Route("/post", name="app_post")
  */
 class PostController extends AbstractController
 {
     /**
-     * @Route("/post", name="get_posts", methods={"GET"})
+     * @Route("/", name="get_categories", methods={"GET"})
      */
     public function index(PostsRepository $postsRepository): JsonResponse
     {
@@ -30,26 +30,25 @@ class PostController extends AbstractController
                 'description' => $post->getContent(),
                 'category' => $post->getCategoryIdOrNull(),
             ];
-
-            }
+        }
         return $this->json($data);
     }
 
-    
+
     /**
      * @Route("/", name="create_post", methods={"POST"})
      */
     public function new(Request $request, PostsRepository $postsRepository, CategoriesRepository $categoriesRepository): JsonResponse
-    {   
- 
+    {
+
         $post = new Posts();
         $post->setTitle($request->get('title'));
         $post->setContent($request->get('content'));
         $post->setCategory($categoriesRepository->findOneById($request->get('category')));
 
- 
+
         $postsRepository->add($post, true);
- 
+
         return $this->json('Created new project successfully with id ' . $post->getId());
     }
 
@@ -60,21 +59,21 @@ class PostController extends AbstractController
     {
         $post = $postsRepository->findOneById($id);
         if (!$post) {
- 
+
             return $this->json('No post found for id ' . $id, 404);
         }
- 
+
         $data =  [
             'id' => $post->getId(),
             'title' => $post->getTitle(),
             'content' => $post->getContent(),
             'category' => $post->getCategoryIdOrNull(),
         ];
-         
+
         return $this->json($data);
     }
- 
-    
+
+
     /**
      * @Route("/{id}", name="update_post", methods={"PUT"})
      */
@@ -84,36 +83,36 @@ class PostController extends AbstractController
         if (!$post) {
             return $this->json('No project found for id ' . $id, 404);
         }
- 
+
         $post->setTitle($request->get('title'));
         $post->setContent($request->get('content'));
         $post->setCategory($categoriesRepository->findOneById($request->get('category')));
 
         $postsRepository->add($post, true);
- 
+
         $data =  [
             'id' => $post->getId(),
             'name' => $post->getTitle(),
             'content' => $post->getContent(),
             'category' => $post->getCategoryIdOrNull(),
         ];
-         
+
         return $this->json($data);
     }
 
-    
+
     /**
      * @Route("/{id}", name="delete_post", methods={"DELETE"})
      */
     public function delete(int $id, PostsRepository $postsRepository): JsonResponse
     {
         $post = $postsRepository->findOneById($id);
- 
+
         if (!$post) {
             return $this->json('No project found for id ' . $id, 404);
         }
         $postsRepository->remove($post, true);
- 
+
         return $this->json('Deleted a project successfully with id ' . $id);
     }
 }
