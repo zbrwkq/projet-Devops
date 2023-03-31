@@ -1,0 +1,150 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: projet-devops
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: projet-devops-php
+  labels:
+    app: projet-devops-php
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: projet-devops-php
+  template:
+    metadata:
+      labels:
+        app: projet-devops-php
+    spec:
+      containers:
+        - name: projet-devops-php
+          image: projet-devops-php
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 9000
+          volumeMounts:
+            - name: projet-devops-code
+              mountPath: /var/www/html
+      volumes:
+        - name: projet-devops-code
+          hostPath:
+            path: /path/to/your/code
+      imagePullSecrets:
+        - name: your-registry-secret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: projet-devops-php
+spec:
+  selector:
+    app: projet-devops-php
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: projet-devops-db
+  labels:
+    app: projet-devops-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: projet-devops-db
+  template:
+    metadata:
+      labels:
+        app: projet-devops-db
+    spec:
+      containers:
+        - name: projet-devops-db
+          image: mysql:8.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: projet-devops
+            - name: MYSQL_USER
+              value: user
+            - name: MYSQL_PASSWORD
+              value: user
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: projet-devops-db-data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: projet-devops-db-data
+          hostPath:
+            path: /path/to/your/db/data
+      imagePullSecrets:
+        - name: your-registry-secret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: projet-devops-db
+spec:
+  selector:
+    app: projet-devops-db
+  ports:
+    - name: mysql
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: projet-devops-web
+spec:
+  selector:
+    app: projet-devops-web
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: projet-devops-web
+  labels:
+    app: projet-devops-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: projet-devops-web
+  template:
+    metadata:
+      labels:
+        app: projet-devops-web
+    spec:
+      containers:
+        - name: projet-devops-web
+          image: nginx:1.21-alpine
+          imagePullPolicy: IfNotPresent
+         
